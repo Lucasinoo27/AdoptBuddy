@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <h1 class="text-4xl font-bold">About AdoptBuddy</h1>
-    <p class="mt-4 text-lg">
+  <div class="text-center my-4">
+    <h1 class="display-4 fw-bold">About AdoptBuddy</h1>
+    <p class="mt-3 fs-5">
       This platform connects people with pets looking for a loving home.
     </p>
   </div>

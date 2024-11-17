@@ -1,6 +1,6 @@
 # AdoptBuddy
 
-AdoptBuddy is a web application designed to help people find pets looking for a home. This project was built using Vue.js and Tailwind CSS as part of a university coursework.
+AdoptBuddy is a web application designed to help people find pets looking for a home. This project was built using Vue.js and Bootstrap as part of a university coursework.
 
 ## Project setup
 

@@ -1,8 +1,13 @@
 <template>
   <div id="app">
-    <nav class="bg-gray-800 text-white p-4">
-      <router-link class="mr-4" to="/">Home</router-link>
-      <router-link to="/about">About</router-link>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark p-3">
+      <div class="container">
+        <router-link class="navbar-brand" to="/">AdoptBuddy</router-link>
+        <div class="navbar-nav">
+          <router-link class="nav-link" to="/">Home</router-link>
+          <router-link class="nav-link" to="/about">About</router-link>
+        </div>
+      </div>
     </nav>
     <router-view />
   </div>
@@ -22,6 +27,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
