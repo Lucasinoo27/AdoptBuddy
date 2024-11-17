@@ -5,6 +5,7 @@
         <router-link class="navbar-brand" to="/">AdoptBuddy</router-link>
         <div class="navbar-nav">
           <router-link class="nav-link" to="/">Home</router-link>
+          <router-link class="nav-link" to="/add-pet">Add Pet</router-link>
           <router-link class="nav-link" to="/about">About</router-link>
         </div>
       </div>

@@ -1,0 +1,26 @@
+import { defineStore } from "pinia";
+
+export const usePetStore = defineStore("petStore", {
+  state: () => ({
+    pets: [
+      {
+        id: 1,
+        name: "Buddy",
+        description: "Friendly dog",
+        image: "https://via.placeholder.com/150",
+      },
+      {
+        id: 2,
+        name: "Kitty",
+        description: "Lovely cat",
+        image: "https://via.placeholder.com/150",
+      },
+    ],
+  }),
+  actions: {
+    addPet(newPet) {
+      const id = this.pets.length + 1;
+      this.pets.push({ id, ...newPet });
+    },
+  },
+});
