@@ -1,6 +1,7 @@
 <template>
-  <div>
-    <form @submit.prevent="submitPet">
+  <div class="container my-5">
+    <form class="card p-4 shadow" @submit.prevent="submitPet">
+      <h2 class="mb-4 text-center">Add a New Pet</h2>
       <div class="mb-3">
         <label for="name" class="form-label">Pet Name</label>
         <input
@@ -34,7 +35,7 @@
           required
         />
       </div>
-      <button type="submit" class="btn btn-primary">Add Pet</button>
+      <button type="submit" class="btn btn-success w-100">Add Pet</button>
     </form>
   </div>
 </template>
@@ -56,9 +57,9 @@ export default {
   methods: {
     submitPet() {
       const petStore = usePetStore();
+
       petStore.addPet(this.pet);
 
-      // Resetovanie formulára
       this.pet = {
         name: "",
         description: "",
@@ -70,3 +71,10 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.card {
+  max-width: 600px;
+  margin: 0 auto;
+}
+</style>
