@@ -16,6 +16,16 @@ const routes = [
     component: PetDetail,
     props: true,
   },
+  {
+    path: "/edit/:id",
+    name: "EditPet",
+    component: () => import("@/components/EditPet.vue"),
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    name: "NotFound",
+    component: () => import("@/views/NotFound.vue"),
+  },
 ];
 
 const router = createRouter({

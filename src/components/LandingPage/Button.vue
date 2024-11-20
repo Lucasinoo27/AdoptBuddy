@@ -22,22 +22,24 @@ export default {
 
 <style scoped>
 .btn-container {
-  background: #3aab97;
-  border-radius: 5em;
-  padding: 0.4em 0.9em;
-  font-size: 1em;
+  background: #34a89e;
+  border-radius: 50px;
+  padding: 0.6em 1.5em;
+  font-size: 1.2em;
   font-weight: 600;
-  color: #fff;
+  color: white;
   display: flex;
   align-items: center;
-  border: 2px solid #3aab97;
+  justify-content: center;
+  border: 2px solid #34a89e;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .btn-container:hover {
-  background: transparent;
-  color: #3aab97;
+  background: white;
+  color: #34a89e;
 }
 
 .btn-container span {
@@ -47,5 +49,7 @@ export default {
 
 .btn-container span svg {
   margin-right: 0.5em;
+  width: 1.5em;
+  height: 1.5em;
 }
 </style>

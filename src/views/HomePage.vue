@@ -2,52 +2,59 @@
   <div class="container text-center my-4">
     <h1 class="display-4 fw-bold">Welcome to AdoptBuddy!</h1>
     <p class="mt-3 fs-5">Platform for finding pets for adoption.</p>
+    <div class="my-4">
+      <input
+        type="text"
+        v-model="searchQuery"
+        class="form-control"
+        placeholder="Search for a pet..."
+      />
+    </div>
+
+    <div class="my-4">
+      <select v-model="selectedType" class="form-select">
+        <option value="">All</option>
+        <option value="Dog">Dog</option>
+        <option value="Cat">Cat</option>
+        <option value="Bird">Bird</option>
+      </select>
+    </div>
+
     <div class="row row-cols-1 row-cols-md-3 g-4 mt-5">
-      <div class="col" v-for="pet in pets" :key="pet.id">
-        <div class="card shadow-sm h-100">
-          <img
-            :src="pet.image"
-            class="card-img-top fixed-image"
-            alt="Pet image"
-          />
-          <div class="card-body">
-            <h5 class="card-title">{{ pet.name }}</h5>
-            <p class="card-text text-muted">{{ pet.description }}</p>
-            <button
-              class="btn btn-primary w-100"
-              @click="goToPetDetail(pet.id)"
-            >
-              View Details
-            </button>
-          </div>
-        </div>
-      </div>
+      <PetCard v-for="pet in filteredPets" :key="pet.id" :pet="pet" />
     </div>
   </div>
 </template>
 
 <script>
 import { usePetStore } from "@/stores/petStore";
+import PetCard from "@/components/PetCard.vue";
 
 export default {
   name: "HomePage",
+  components: { PetCard },
+  data() {
+    return {
+      searchQuery: "",
+      selectedType: "",
+    };
+  },
   computed: {
     pets() {
       const petStore = usePetStore();
       return petStore.pets;
     },
-  },
-  methods: {
-    goToPetDetail(petId) {
-      this.$router.push({ name: "PetDetail", params: { id: petId } });
+    filteredPets() {
+      return this.pets
+        .filter((pet) =>
+          pet.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+        )
+        .filter((pet) =>
+          this.selectedType ? pet.type === this.selectedType : true
+        );
     },
   },
 };
 </script>
 
-<style scoped>
-.fixed-image {
-  height: 200px;
-  object-fit: cover;
-}
-</style>
+<style></style>

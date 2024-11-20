@@ -6,21 +6,41 @@ export const usePetStore = defineStore("petStore", {
       {
         id: 1,
         name: "Buddy",
+        type: "Dog",
+        age: 3,
+        image: require("@/assets/dog.jpg"),
         description: "Friendly dog",
-        image: "https://via.placeholder.com/150",
       },
       {
         id: 2,
-        name: "Kitty",
-        description: "Lovely cat",
-        image: "https://via.placeholder.com/150",
+        name: "Mittens",
+        type: "Cat",
+        age: 2,
+        image: require("@/assets/dog.jpg"),
+        description: "Cute cat",
+      },
+      {
+        id: 3,
+        name: "Charlie",
+        type: "Bird",
+        age: 1,
+        image: require("@/assets/dog.jpg"),
+        description: "Chirpy bird",
       },
     ],
+    favoritePets: [],
   }),
   actions: {
     addPet(newPet) {
       const id = this.pets.length + 1;
       this.pets.push({ id, ...newPet });
+    },
+    toggleFavorite(petId) {
+      if (this.favoritePets.includes(petId)) {
+        this.favoritePets = this.favoritePets.filter((id) => id !== petId);
+      } else {
+        this.favoritePets.push(petId);
+      }
     },
   },
 });

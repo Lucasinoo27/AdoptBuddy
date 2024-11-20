@@ -15,31 +15,30 @@ export default {
     HomeTitle,
     LandingPageButton,
   },
+  mounted() {
+    document.body.classList.add("no-scroll");
+  },
+  unmounted() {
+    document.body.classList.remove("no-scroll");
+  },
 };
 </script>
 
 <style scoped>
 .home {
-  position: absolute;
+  position: relative;
   width: 100vw;
   height: 100vh;
-  background-size: cover;
-  background-position: center;
+  background: url("/src/assets/home-background.png") no-repeat center center;
+  background-size: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  font-size: 2em;
-  font-weight: 500;
-  top: 0;
-  left: 0;
+  padding-left: 10vw;
 }
 
 .home > * {
-  position: relative;
-  left: calc(2.8em + 8vw);
-  bottom: 4vh;
-  z-index: 1;
-  margin: 0.2em 0;
+  margin: 1em 0;
 }
 </style>

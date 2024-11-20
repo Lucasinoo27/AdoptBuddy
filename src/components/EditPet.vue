@@ -1,7 +1,7 @@
 <template>
   <div class="container my-5">
-    <h1 class="display-4 text-center mb-4">Add a New Pet</h1>
-    <form @submit.prevent="submitPet">
+    <h1 class="display-4 text-center mb-4">Edit Pet</h1>
+    <form @submit.prevent="submitEdit">
       <div class="mb-3">
         <label for="name" class="form-label">Name</label>
         <input
@@ -43,34 +43,36 @@
           <option value="Bird">Bird</option>
         </select>
       </div>
-      <button type="submit" class="btn btn-primary w-100">Add Pet</button>
+      <button type="submit" class="btn btn-success w-100">Save Changes</button>
     </form>
   </div>
 </template>
 
 <script>
 import { usePetStore } from "@/stores/petStore";
+import { ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
 
 export default {
-  name: "AddPet",
-  data() {
-    return {
-      pet: {
-        name: "",
-        description: "",
-        image: "",
-        type: "",
-      },
+  name: "EditPet",
+  setup() {
+    const petStore = usePetStore();
+    const router = useRouter();
+    const route = useRoute();
+    const petId = route.params.id;
+    const pet = ref({ ...petStore.pets.find((p) => p.id === +petId) });
+
+    const submitEdit = () => {
+      const index = petStore.pets.findIndex((p) => p.id === +petId);
+      petStore.pets[index] = pet.value;
+      alert("Pet updated successfully!");
+      router.push({ name: "Home" });
     };
-  },
-  methods: {
-    submitPet() {
-      const petStore = usePetStore();
-      petStore.addPet(this.pet);
-      this.pet = { name: "", description: "", image: "", type: "" };
-      alert("Pet added successfully!");
-      this.$router.push({ name: "Home" });
-    },
+
+    return {
+      pet,
+      submitEdit,
+    };
   },
 };
 </script>

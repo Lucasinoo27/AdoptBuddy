@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    <h2 class="mb-4">Add a New Pet</h2>
     <AddPet />
   </div>
 </template>
