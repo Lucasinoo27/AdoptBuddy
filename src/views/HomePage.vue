@@ -1,18 +1,26 @@
 <template>
   <div class="container text-center my-4">
-    <h1 class="display-4 fw-bold">Welcome to AdoptBuddy!</h1>
-    <p class="mt-3 fs-5">Platform for finding pets for adoption.</p>
-    <div class="my-4">
+    <h1 class="display-4 fw-bold">Find your pet!</h1>
+
+    <!-- Buttons for toggling filters and sorting -->
+    <div class="d-flex justify-content-end my-4">
+      <button class="btn btn-primary me-2" @click="showFilter = !showFilter">
+        {{ showFilter ? "Hide Filter" : "Show Filter" }}
+      </button>
+      <button class="btn btn-secondary" @click="showSorting = !showSorting">
+        {{ showSorting ? "Hide Sorting" : "Show Sorting" }}
+      </button>
+    </div>
+
+    <!-- Filter Section -->
+    <div v-if="showFilter" class="my-4 border p-3 rounded">
       <input
         type="text"
         v-model="searchQuery"
-        class="form-control"
+        class="form-control mb-3"
         placeholder="Search for a pet..."
       />
-    </div>
-
-    <div class="my-4">
-      <select v-model="selectedType" class="form-select">
+      <select v-model="selectedType" class="form-select mb-3">
         <option value="">All</option>
         <option value="Dog">Dog</option>
         <option value="Cat">Cat</option>
@@ -20,8 +28,18 @@
       </select>
     </div>
 
+    <!-- Sorting Section -->
+    <div v-if="showSorting" class="my-4 border p-3 rounded">
+      <select v-model="selectedSort" class="form-select">
+        <option value="">Sort by</option>
+        <option value="name">Name</option>
+        <option value="type">Type</option>
+      </select>
+    </div>
+
+    <!-- Pet Cards -->
     <div class="row row-cols-1 row-cols-md-3 g-4 mt-5">
-      <PetCard v-for="pet in filteredPets" :key="pet.id" :pet="pet" />
+      <PetCard v-for="pet in sortedPets" :key="pet.id" :pet="pet" />
     </div>
   </div>
 </template>
@@ -37,6 +55,9 @@ export default {
     return {
       searchQuery: "",
       selectedType: "",
+      selectedSort: "",
+      showFilter: false,
+      showSorting: false,
     };
   },
   computed: {
@@ -53,8 +74,26 @@ export default {
           this.selectedType ? pet.type === this.selectedType : true
         );
     },
+    sortedPets() {
+      if (this.selectedSort === "name") {
+        return [...this.filteredPets].sort((a, b) =>
+          a.name.localeCompare(b.name)
+        );
+      }
+      if (this.selectedSort === "type") {
+        return [...this.filteredPets].sort((a, b) =>
+          a.type.localeCompare(b.type)
+        );
+      }
+      return this.filteredPets;
+    },
   },
 };
 </script>
 
-<style></style>
+<style>
+.border {
+  border: 1px solid #ccc;
+  background-color: #f8f9fa;
+}
+</style>

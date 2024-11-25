@@ -1,6 +1,6 @@
 <template>
   <div class="container my-5">
-    <h1 class="display-4 text-center mb-4">Add a New Pet</h1>
+    <h1 class="display-4 fw-bold text-center">Add a new pet!</h1>
     <form @submit.prevent="submitPet">
       <div class="mb-3">
         <label for="name" class="form-label">Name</label>

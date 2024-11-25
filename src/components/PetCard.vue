@@ -1,25 +1,28 @@
 <template>
-  <div class="card shadow-sm h-100">
-    <img :src="pet.image" class="card-img-top" alt="Pet image" loading="lazy" />
-    <div class="card-body">
-      <h5 class="card-title">{{ pet.name }}</h5>
-      <p class="card-text">{{ pet.description }}</p>
-      <p class="card-text text-muted">Type: {{ pet.type }}</p>
-      <div class="d-flex justify-content-between">
-        <button class="btn btn-primary" @click="viewDetails">
-          View Details
-        </button>
-        <button class="btn btn-warning" @click="editPet">Edit</button>
+  <div class="card pet-card shadow-sm h-100" @click="viewDetails">
+    <!-- Pet Image with Overlay -->
+    <div class="card-img-container position-relative">
+      <img
+        :src="pet.image"
+        class="card-img-top pet-img"
+        alt="Pet image"
+        loading="lazy"
+      />
+      <!-- Always Visible Pet Name -->
+      <div class="pet-name-always position-absolute w-100 text-center">
+        <h5 class="pet-name">{{ pet.name }}</h5>
       </div>
-
-      <!-- Ikona srdca -->
-      <div class="favorite-icon mt-3" @click="toggleFavorite">
-        <i
-          :class="isFavorite ? 'fas fa-heart text-danger' : 'far fa-heart'"
-        ></i>
-        <span>{{
-          isFavorite ? "Added to Favorites" : "Add to Favorites"
-        }}</span>
+      <!-- Hover Overlay -->
+      <div class="overlay position-absolute top-0 start-0 w-100 h-100">
+        <div
+          class="pet-info text-white d-flex flex-column justify-content-end p-3"
+        >
+          <div class="pet-type">
+            <i :class="getPetIcon(pet.type)" class="me-2"></i>
+            <span>{{ pet.type }}</span>
+          </div>
+          <p class="pet-description text-truncate">{{ pet.description }}</p>
+        </div>
       </div>
     </div>
   </div>
@@ -43,35 +46,86 @@ export default {
     },
   },
   methods: {
-    toggleFavorite() {
-      const petStore = usePetStore();
-      if (this.isFavorite) {
-        petStore.favoritePets = petStore.favoritePets.filter(
-          (id) => id !== this.pet.id
-        );
-      } else {
-        petStore.favoritePets.push(this.pet.id);
+    getPetIcon(type) {
+      switch (type.toLowerCase()) {
+        case "dog":
+          return "fas fa-dog";
+        case "cat":
+          return "fas fa-cat";
+        case "bird":
+          return "fas fa-dove";
+        default:
+          return "fas fa-paw";
       }
     },
     viewDetails() {
       this.$router.push({ name: "PetDetail", params: { id: this.pet.id } });
-    },
-    editPet() {
-      this.$router.push({ name: "EditPet", params: { id: this.pet.id } });
     },
   },
 };
 </script>
 
 <style scoped>
-.favorite-icon {
-  display: flex;
-  align-items: center;
+.pet-card {
+  border: none;
+  overflow: hidden;
   cursor: pointer;
-  font-size: 1rem;
+  transition: transform 0.2s;
+}
+.pet-card:hover {
+  transform: scale(1.02);
 }
 
-.favorite-icon i {
-  margin-right: 0.5rem;
+.card-img-container {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 0.5rem;
+}
+
+.pet-img {
+  object-fit: cover;
+  height: 100%;
+  width: 100%;
+  filter: brightness(0.7);
+}
+
+.overlay {
+  background: rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+  opacity: 0;
+}
+
+.card-img-container:hover .overlay {
+  opacity: 1;
+}
+
+.pet-info {
+  color: #fff;
+}
+
+.pet-type {
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.pet-description {
+  font-size: 0.875rem;
+  font-style: italic;
+}
+
+/* Always visible pet name */
+.pet-name-always {
+  top: 10px;
+  left: 0;
+  z-index: 10;
+  color: #fff;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.7);
+}
+
+.pet-name {
+  font-size: 1.5rem;
+  font-weight: bold;
 }
 </style>
