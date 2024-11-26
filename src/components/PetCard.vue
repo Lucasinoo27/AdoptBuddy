@@ -3,10 +3,11 @@
     <!-- Pet Image with Overlay -->
     <div class="card-img-container position-relative">
       <img
-        :src="pet.image"
+        :src="imageSrc"
         class="card-img-top pet-img"
         alt="Pet image"
         loading="lazy"
+        @error="handleImageError"
       />
       <!-- Always Visible Pet Name -->
       <div class="pet-name-always position-absolute w-100 text-center">
@@ -39,6 +40,11 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      imageSrc: this.pet.image || "default-placeholder.png", // Default image
+    };
+  },
   computed: {
     isFavorite() {
       const petStore = usePetStore();
@@ -58,6 +64,9 @@ export default {
           return "fas fa-paw";
       }
     },
+    handleImageError() {
+      this.imageSrc = "default-placeholder.png"; // Fallback image if the URL is invalid
+    },
     viewDetails() {
       this.$router.push({ name: "PetDetail", params: { id: this.pet.id } });
     },
@@ -71,7 +80,9 @@ export default {
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.2s;
+  background-color: #f8f9fa; /* Light grey background for empty cards */
 }
+
 .pet-card:hover {
   transform: scale(1.02);
 }

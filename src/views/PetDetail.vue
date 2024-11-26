@@ -3,7 +3,12 @@
     <div class="row">
       <!-- Galéria obrázkov -->
       <div class="col-md-6">
-        <img :src="pet.image" class="img-fluid" alt="Pet image" />
+        <img
+          :src="mainImage"
+          class="img-fluid"
+          alt="Pet image"
+          @error="setPlaceholderImage"
+        />
         <div class="gallery mt-3">
           <img
             v-for="(img, index) in pet.gallery"
@@ -11,6 +16,7 @@
             :src="img"
             class="img-thumbnail"
             @click="changeMainImage(img)"
+            @error="setPlaceholderGalleryImage(index)"
           />
         </div>
       </div>
@@ -30,21 +36,36 @@
 
 <script>
 import { usePetStore } from "@/stores/petStore";
-import { ref } from "vue";
+import { computed, ref } from "vue";
+import { useRoute } from "vue-router";
 
 export default {
   name: "PetDetail",
   setup() {
+    const route = useRoute();
     const petStore = usePetStore();
-    const pet = ref(petStore.pets.find((p) => p.id === 1));
+    const petId = computed(() => Number(route.params.id));
+    const pet = computed(() => petStore.pets.find((p) => p.id === petId.value));
+    const mainImage = ref(pet.value?.image || "/default-placeholder.png");
 
     const changeMainImage = (img) => {
-      pet.value.image = img;
+      mainImage.value = img;
+    };
+
+    const setPlaceholderImage = () => {
+      mainImage.value = "/default-placeholder.png";
+    };
+
+    const setPlaceholderGalleryImage = (index) => {
+      pet.value.gallery[index] = "/default-placeholder.png";
     };
 
     return {
       pet,
+      mainImage,
       changeMainImage,
+      setPlaceholderImage,
+      setPlaceholderGalleryImage,
     };
   },
 };
