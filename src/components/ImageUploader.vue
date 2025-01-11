@@ -7,6 +7,23 @@
       :class="{ 'has-image': previewUrl }"
       @click="triggerFileInput"
     >
+      <!-- Loading Overlay -->
+      <div v-if="isLoading" class="loading-overlay">
+        <div class="progress" style="width: 80%;">
+          <div
+            class="progress-bar progress-bar-striped progress-bar-animated"
+            role="progressbar"
+            :style="{ width: `${uploadProgress}%` }"
+            :aria-valuenow="uploadProgress"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            {{ uploadProgress }}%
+          </div>
+        </div>
+      </div>
+
+      <!-- Image Preview -->
       <img
         v-if="previewUrl"
         :src="previewUrl"
@@ -39,6 +56,7 @@
       v-if="previewUrl"
       class="btn btn-outline-danger btn-sm mt-2"
       @click.prevent="removeImage"
+      :disabled="isLoading"
     >
       Remove Image
     </button>
@@ -62,11 +80,15 @@ export default {
     return {
       previewUrl: this.initialImage,
       error: "",
+      isLoading: false,
+      uploadProgress: 0,
     };
   },
   methods: {
     triggerFileInput() {
-      this.$refs.fileInput.click();
+      if (!this.isLoading) {
+        this.$refs.fileInput.click();
+      }
     },
     handleFileSelect(event) {
       const file = event.target.files[0];
@@ -85,16 +107,37 @@ export default {
       }
 
       this.error = ""; // Clear any previous errors
+      this.isLoading = true;
+      this.uploadProgress = 0;
 
       // Create preview URL
       const reader = new FileReader();
-      reader.onload = (e) => {
-        this.previewUrl = e.target.result;
-        this.$emit("image-selected", {
-          file,
-          dataUrl: e.target.result,
-        });
+
+      reader.onprogress = (e) => {
+        if (e.lengthComputable) {
+          this.uploadProgress = Math.round((e.loaded / e.total) * 100);
+        }
       };
+
+      reader.onload = (e) => {
+        setTimeout(() => {
+          // Small delay to ensure progress bar is visible
+          this.previewUrl = e.target.result;
+          this.$emit("image-selected", {
+            file,
+            dataUrl: e.target.result,
+          });
+          this.isLoading = false;
+          this.uploadProgress = 100;
+        }, 500);
+      };
+
+      reader.onerror = () => {
+        this.error = "Failed to load image. Please try again.";
+        this.isLoading = false;
+        this.uploadProgress = 0;
+      };
+
       reader.readAsDataURL(file);
     },
     removeImage() {
@@ -131,9 +174,10 @@ export default {
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  position: relative;
 }
 
-.preview-area:hover {
+.preview-area:hover:not(.loading) {
   border-color: #0d6efd;
   background-color: rgba(13, 110, 253, 0.05);
 }
@@ -155,5 +199,31 @@ export default {
 
 .upload-placeholder i {
   color: #0d6efd;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.progress {
+  height: 20px;
+  background-color: #e9ecef;
+}
+
+.progress-bar {
+  background-color: #0d6efd;
+  color: white;
+  text-align: center;
+  line-height: 20px;
+  font-size: 12px;
 }
 </style>

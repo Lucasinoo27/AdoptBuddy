@@ -1,5 +1,4 @@
 <!-- eslint-disable prettier/prettier -->
-<!-- eslint-disable prettier/prettier -->
 <template>
   <div
     v-if="show"
@@ -11,7 +10,7 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">{{ title }}</h5>
+          <h5 class="modal-title">{{ modalTitle }}</h5>
           <button
             type="button"
             class="btn-close"
@@ -20,7 +19,7 @@
           ></button>
         </div>
         <div class="modal-body">
-          <p>{{ message }}</p>
+          <p>{{ modalMessage }}</p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" @click="close">
@@ -28,10 +27,10 @@
           </button>
           <button
             type="button"
-            :class="['btn', `btn-${confirmButtonType}`]"
+            :class="['btn', `btn-${buttonType}`]"
             @click="confirm"
           >
-            {{ confirmText }}
+            {{ confirmButtonText }}
           </button>
         </div>
       </div>
@@ -48,9 +47,14 @@ export default {
       type: Boolean,
       required: true,
     },
+    type: {
+      type: String,
+      default: "default",
+      validator: (value) => ["default", "delete"].includes(value),
+    },
     title: {
       type: String,
-      default: "Confirm Action",
+      default: "",
     },
     message: {
       type: String,
@@ -58,7 +62,7 @@ export default {
     },
     confirmText: {
       type: String,
-      default: "Confirm",
+      default: "",
     },
     cancelText: {
       type: String,
@@ -68,6 +72,34 @@ export default {
       type: String,
       default: "primary",
       validator: (value) => ["primary", "danger", "warning"].includes(value),
+    },
+    itemName: {
+      type: String,
+      default: "",
+    },
+  },
+  computed: {
+    modalTitle() {
+      if (this.type === "delete") {
+        return this.title || `Delete ${this.itemName || "Item"}`;
+      }
+      return this.title || "Confirm Action";
+    },
+    modalMessage() {
+      if (this.type === "delete" && this.itemName) {
+        return (
+          this.message ||
+          `Are you sure you want to delete ${this.itemName}? This action cannot be undone.`
+        );
+      }
+      return this.message;
+    },
+    buttonType() {
+      return this.type === "delete" ? "danger" : this.confirmButtonType;
+    },
+    confirmButtonText() {
+      if (this.confirmText) return this.confirmText;
+      return this.type === "delete" ? "Delete" : "Confirm";
     },
   },
   methods: {
@@ -130,5 +162,19 @@ export default {
 
 .btn-close:focus {
   box-shadow: none;
+}
+
+/* Animation classes */
+.modal.fade.show {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 </style>

@@ -68,11 +68,13 @@
 
 <script>
 import { usePetStore } from "@/stores/petStore";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import metaTags from "@/mixins/metaTags";
 
 export default {
   name: "PetDetail",
+  mixins: [metaTags],
   setup() {
     const route = useRoute();
     const router = useRouter();
@@ -83,6 +85,22 @@ export default {
     const mainImage = ref(pet.value?.image || "/default-placeholder.png");
     const isFavorite = computed(() =>
       petStore.favoritePets.includes(petId.value)
+    );
+
+    // Update route meta when pet data changes
+    watch(
+      pet,
+      (newPet) => {
+        if (newPet) {
+          route.meta.title = `${newPet.name} - ${newPet.type}`;
+          route.meta.description = `Meet ${newPet.name}, a ${newPet.age} year old ${newPet.type}. ${newPet.description}`;
+          route.meta.keywords = `adopt ${newPet.type.toLowerCase()}, ${newPet.type.toLowerCase()} adoption, pet adoption, ${
+            newPet.name
+          }`;
+          route.meta.image = newPet.image || "/default-placeholder.png";
+        }
+      },
+      { immediate: true }
     );
 
     const setPlaceholderImage = () => {
