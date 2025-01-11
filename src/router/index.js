@@ -1,25 +1,37 @@
 import { createRouter, createWebHistory } from "vue-router";
-import LandingPageView from "@/views/LandingPageView.vue";
-import Home from "../views/HomePage.vue";
-import About from "../views/AboutPage.vue";
-import AddPetPage from "@/views/AddPetPage.vue";
-import PetDetail from "@/views/PetDetail.vue";
 
 const routes = [
-  { path: "/", name: "LandingPage", component: LandingPageView },
-  { path: "/home", name: "Home", component: Home },
-  { path: "/about", name: "About", component: About },
-  { path: "/add-pet", name: "AddPetPage", component: AddPetPage },
+  {
+    path: "/",
+    name: "LandingPage",
+    component: () => import("@/views/LandingPageView.vue"),
+  },
+  {
+    path: "/home",
+    name: "Home",
+    component: () => import("@/views/HomePage.vue"),
+  },
+  {
+    path: "/about",
+    name: "About",
+    component: () => import("@/views/AboutPage.vue"),
+  },
+  {
+    path: "/add-pet",
+    name: "AddPetPage",
+    component: () => import("@/views/AddPetPage.vue"),
+  },
   {
     path: "/pet/:id",
     name: "PetDetail",
-    component: PetDetail,
+    component: () => import("@/views/PetDetail.vue"),
     props: true,
   },
   {
     path: "/edit/:id",
     name: "EditPet",
-    component: () => import("@/components/EditPet.vue"),
+    component: () => import("@/views/EditPetPage.vue"),
+    props: true,
   },
   {
     path: "/:pathMatch(.*)*",

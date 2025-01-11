@@ -1,6 +1,6 @@
 <template>
   <div class="container text-center mt-5">
-    <h1 class="display-1 text-danger">404</h1>
+    <h1 class="display-1 text-danger1">404</h1>
     <p class="fs-4 text-muted">
       Oops! The page you're looking for doesn't exist.
     </p>
@@ -17,5 +17,8 @@ export default {
 <style>
 .container {
   margin-top: 50px;
+}
+.text-danger1 {
+  color: #3aab97;
 }
 </style>

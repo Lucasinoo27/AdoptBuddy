@@ -1,11 +1,23 @@
 <template>
-  <div class="card pet-card shadow-sm h-100" @click="viewDetails">
+  <div class="card pet-card shadow-sm h-100">
+    <!-- Favorite Button -->
+    <button
+      class="btn-favorite position-absolute"
+      @click.stop="toggleFavorite"
+      :title="isFavorite ? 'Remove from favorites' : 'Add to favorites'"
+    >
+      <i
+        class="fas fa-heart"
+        :class="{ 'text-danger': isFavorite, 'text-muted': !isFavorite }"
+      ></i>
+    </button>
+
     <!-- Pet Image with Overlay -->
-    <div class="card-img-container position-relative">
+    <div class="card-img-container position-relative" @click="viewDetails">
       <img
         :src="imageSrc"
         class="card-img-top pet-img"
-        alt="Pet image"
+        :alt="`${pet.name} - ${pet.type}`"
         loading="lazy"
         @error="handleImageError"
       />
@@ -23,6 +35,12 @@
             <span>{{ pet.type }}</span>
           </div>
           <p class="pet-description text-truncate">{{ pet.description }}</p>
+          <div class="pet-age mt-1">
+            <i class="fas fa-birthday-cake me-2"></i>
+            <span
+              >{{ pet.age }} {{ pet.age === 1 ? "year" : "years" }} old</span
+            >
+          </div>
         </div>
       </div>
     </div>
@@ -65,10 +83,14 @@ export default {
       }
     },
     handleImageError() {
-      this.imageSrc = "default-placeholder.png"; // Fallback image if the URL is invalid
+      this.imageSrc = "/default-placeholder.png"; // Fallback image if the URL is invalid
     },
     viewDetails() {
       this.$router.push({ name: "PetDetail", params: { id: this.pet.id } });
+    },
+    toggleFavorite() {
+      const petStore = usePetStore();
+      petStore.toggleFavorite(this.pet.id);
     },
   },
 };
@@ -78,13 +100,42 @@ export default {
 .pet-card {
   border: none;
   overflow: hidden;
-  cursor: pointer;
   transition: transform 0.2s;
-  background-color: #f8f9fa; /* Light grey background for empty cards */
+  background-color: #f8f9fa;
+  position: relative;
 }
 
 .pet-card:hover {
   transform: scale(1.02);
+}
+
+.btn-favorite {
+  top: 10px;
+  right: 10px;
+  z-index: 20;
+  background: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.btn-favorite:hover {
+  transform: scale(1.1);
+}
+
+.btn-favorite i {
+  font-size: 1.2rem;
+  transition: all 0.2s ease;
+}
+
+.card-img-container {
+  cursor: pointer;
 }
 
 .card-img-container {

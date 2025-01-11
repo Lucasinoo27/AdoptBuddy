@@ -1,45 +1,35 @@
 <template>
-  <div class="container text-center my-4">
-    <h1 class="display-4 fw-bold">Find your pet!</h1>
+  <div class="container my-4">
+    <h1 class="display-4 fw-bold text-center">Find your pet!</h1>
 
-    <!-- Buttons for toggling filters and sorting -->
-    <div class="d-flex justify-content-end my-4">
-      <button class="btn btn-primary me-2" @click="showFilter = !showFilter">
-        {{ showFilter ? "Hide Filter" : "Show Filter" }}
-      </button>
-      <button class="btn btn-secondary" @click="showSorting = !showSorting">
-        {{ showSorting ? "Hide Sorting" : "Show Sorting" }}
-      </button>
-    </div>
+    <div class="row mt-4">
+      <!-- Filter Sidebar -->
+      <div class="col-md-3">
+        <FilterComponent @filter-change="handleFilterChange" />
+      </div>
 
-    <!-- Filter Section -->
-    <div v-if="showFilter" class="my-4 border p-3 rounded">
-      <input
-        type="text"
-        v-model="searchQuery"
-        class="form-control mb-3"
-        placeholder="Search for a pet..."
-      />
-      <select v-model="selectedType" class="form-select mb-3">
-        <option value="">All</option>
-        <option value="Dog">Dog</option>
-        <option value="Cat">Cat</option>
-        <option value="Bird">Bird</option>
-      </select>
-    </div>
+      <!-- Pet Cards Grid -->
+      <div class="col-md-9">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+          <template v-if="filteredAndSortedPets.length">
+            <PetCard v-for="pet in paginatedPets" :key="pet.id" :pet="pet" />
+          </template>
+          <div v-else class="col-12 text-center py-5">
+            <p class="text-muted">No pets found matching your criteria.</p>
+          </div>
+        </div>
 
-    <!-- Sorting Section -->
-    <div v-if="showSorting" class="my-4 border p-3 rounded">
-      <select v-model="selectedSort" class="form-select">
-        <option value="">Sort by</option>
-        <option value="name">Name</option>
-        <option value="type">Type</option>
-      </select>
-    </div>
-
-    <!-- Pet Cards -->
-    <div class="row row-cols-1 row-cols-md-3 g-4 mt-5">
-      <PetCard v-for="pet in sortedPets" :key="pet.id" :pet="pet" />
+        <!-- Pagination -->
+        <div class="mt-4">
+          <PaginationComponent
+            :total-items="filteredAndSortedPets.length"
+            :current-page="currentPage"
+            :items-per-page="itemsPerPage"
+            @page-change="handlePageChange"
+            @update:items-per-page="handleItemsPerPageChange"
+          />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -47,17 +37,23 @@
 <script>
 import { usePetStore } from "@/stores/petStore";
 import PetCard from "@/components/PetCard.vue";
+import FilterComponent from "@/components/FilterComponent.vue";
+import PaginationComponent from "@/components/PaginationComponent.vue";
 
 export default {
   name: "HomePage",
-  components: { PetCard },
+  components: { PetCard, FilterComponent, PaginationComponent },
   data() {
     return {
-      searchQuery: "",
-      selectedType: "",
-      selectedSort: "",
-      showFilter: false,
-      showSorting: false,
+      filters: {
+        searchQuery: "",
+        selectedType: "",
+        maxAge: 30,
+        showFavoritesOnly: false,
+        sortBy: "",
+      },
+      currentPage: 1,
+      itemsPerPage: 12,
     };
   },
   computed: {
@@ -65,27 +61,72 @@ export default {
       const petStore = usePetStore();
       return petStore.pets;
     },
-    filteredPets() {
-      return this.pets
-        .filter((pet) =>
-          pet.name.toLowerCase().includes(this.searchQuery.toLowerCase())
-        )
-        .filter((pet) =>
-          this.selectedType ? pet.type === this.selectedType : true
-        );
+    favoritePets() {
+      const petStore = usePetStore();
+      return petStore.favoritePets;
     },
-    sortedPets() {
-      if (this.selectedSort === "name") {
-        return [...this.filteredPets].sort((a, b) =>
-          a.name.localeCompare(b.name)
+    filteredAndSortedPets() {
+      let filtered = [...this.pets];
+
+      // Apply name search filter
+      if (this.filters.searchQuery) {
+        filtered = filtered.filter((pet) =>
+          pet.name
+            .toLowerCase()
+            .includes(this.filters.searchQuery.toLowerCase())
         );
       }
-      if (this.selectedSort === "type") {
-        return [...this.filteredPets].sort((a, b) =>
-          a.type.localeCompare(b.type)
+
+      // Apply type filter
+      if (this.filters.selectedType) {
+        filtered = filtered.filter(
+          (pet) => pet.type === this.filters.selectedType
         );
       }
-      return this.filteredPets;
+
+      // Apply age filter
+      filtered = filtered.filter((pet) => pet.age <= this.filters.maxAge);
+
+      // Apply favorites filter
+      if (this.filters.showFavoritesOnly) {
+        filtered = filtered.filter((pet) => this.favoritePets.includes(pet.id));
+      }
+
+      // Apply sorting
+      if (this.filters.sortBy) {
+        filtered.sort((a, b) => {
+          switch (this.filters.sortBy) {
+            case "name":
+              return a.name.localeCompare(b.name);
+            case "age":
+              return a.age - b.age;
+            case "type":
+              return a.type.localeCompare(b.type);
+            default:
+              return 0;
+          }
+        });
+      }
+
+      return filtered;
+    },
+    paginatedPets() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
+      return this.filteredAndSortedPets.slice(start, end);
+    },
+  },
+  methods: {
+    handleFilterChange(newFilters) {
+      this.filters = { ...newFilters };
+      this.currentPage = 1; // Reset to first page when filters change
+    },
+    handlePageChange(page) {
+      this.currentPage = page;
+    },
+    handleItemsPerPageChange(value) {
+      this.itemsPerPage = value;
+      this.currentPage = 1; // Reset to first page when items per page changes
     },
   },
 };

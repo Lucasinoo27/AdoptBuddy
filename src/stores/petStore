@@ -1,39 +1,71 @@
 import { defineStore } from "pinia";
 
+// Load initial state from localStorage or use defaults
+const loadState = () => {
+  const savedPets = localStorage.getItem("pets");
+  const savedFavorites = localStorage.getItem("favoritePets");
+  return {
+    pets: savedPets
+      ? JSON.parse(savedPets)
+      : [
+          {
+            id: 1,
+            name: "Buddy",
+            type: "Dog",
+            age: 3,
+            image: require("@/assets/dog.jpg"),
+            description: "Friendly dog",
+          },
+          {
+            id: 2,
+            name: "Mittens",
+            type: "Cat",
+            age: 2,
+            image: require("@/assets/dog.jpg"),
+            description: "Cute cat",
+          },
+          {
+            id: 3,
+            name: "Charlie",
+            type: "Bird",
+            age: 1,
+            image: require("@/assets/dog.jpg"),
+            description: "Chirpy bird",
+          },
+        ],
+    favoritePets: savedFavorites ? JSON.parse(savedFavorites) : [],
+  };
+};
+
 export const usePetStore = defineStore("petStore", {
-  state: () => ({
-    pets: [
-      {
-        id: 1,
-        name: "Buddy",
-        type: "Dog",
-        age: 3,
-        image: require("@/assets/dog.jpg"),
-        description: "Friendly dog",
-      },
-      {
-        id: 2,
-        name: "Mittens",
-        type: "Cat",
-        age: 2,
-        image: require("@/assets/dog.jpg"),
-        description: "Cute cat",
-      },
-      {
-        id: 3,
-        name: "Charlie",
-        type: "Bird",
-        age: 1,
-        image: require("@/assets/dog.jpg"),
-        description: "Chirpy bird",
-      },
-    ],
-    favoritePets: [],
-  }),
+  state: loadState,
   actions: {
     addPet(newPet) {
       const id = this.pets.length + 1;
       this.pets.push({ id, ...newPet });
+      this.saveToLocalStorage();
+    },
+    updatePet(updatedPet) {
+      const index = this.pets.findIndex((p) => p.id === updatedPet.id);
+      if (index !== -1) {
+        this.pets[index] = { ...updatedPet };
+        this.saveToLocalStorage();
+      } else {
+        throw new Error("Pet not found");
+      }
+    },
+    deletePet(petId) {
+      const index = this.pets.findIndex((p) => p.id === petId);
+      if (index !== -1) {
+        this.pets.splice(index, 1);
+        // Remove from favorites if present
+        if (this.favoritePets.includes(petId)) {
+          this.favoritePets = this.favoritePets.filter((id) => id !== petId);
+        }
+        this.saveToLocalStorage();
+      } else {
+        throw new Error("Pet not found");
+      }
     },
     toggleFavorite(petId) {
       if (this.favoritePets.includes(petId)) {
@@ -41,6 +73,11 @@ export const usePetStore = defineStore("petStore", {
       } else {
         this.favoritePets.push(petId);
       }
+      this.saveToLocalStorage();
+    },
+    saveToLocalStorage() {
+      localStorage.setItem("pets", JSON.stringify(this.pets));
+      localStorage.setItem("favoritePets", JSON.stringify(this.favoritePets));
     },
   },
 });
