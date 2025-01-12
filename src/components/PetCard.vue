@@ -1,28 +1,30 @@
 <template>
   <div class="card pet-card shadow-sm h-100">
-    <!-- Action Buttons -->
-    <div class="action-buttons position-absolute">
+    <!-- Modern Favorite Button -->
+    <div class="favorite-button-wrapper position-absolute">
       <button
         class="favorite-button"
         @click.stop="handleFavoriteClick"
         :title="isFavorite ? 'Remove from favorites' : 'Add to favorites'"
-        :class="{ 'is-favorite': isFavorite }"
+        :class="{ 'is-favorite': isFavorite, animate: isAnimating }"
       >
-        <i
-          class="fa-heart"
-          :class="[isFavorite ? 'fas' : 'far']"
-          aria-hidden="true"
-        ></i>
+        <div class="heart-container">
+          <!-- Heart Background for Glow Effect -->
+          <div class="heart-bg"></div>
+          <!-- Main Heart Icon -->
+          <div class="heart-main">
+            <i
+              class="fa-heart"
+              :class="[isFavorite ? 'fas' : 'far']"
+              aria-hidden="true"
+            ></i>
+          </div>
+          <!-- Ripple Effect Container -->
+          <div class="ripple" v-if="isAnimating"></div>
+        </div>
         <span class="visually-hidden">
           {{ isFavorite ? "Remove from favorites" : "Add to favorites" }}
         </span>
-      </button>
-      <button
-        class="btn-action btn-delete"
-        @click.stop="showDeleteConfirmation"
-        title="Delete pet"
-      >
-        <i class="fas fa-trash text-danger"></i>
       </button>
     </div>
 
@@ -68,25 +70,12 @@
       </div>
     </div>
   </div>
-
-  <!-- Delete Confirmation Modal -->
-  <ConfirmationModal
-    v-model:show="showDeleteModal"
-    type="delete"
-    :itemName="pet.name"
-    @confirm="handleDelete"
-  />
 </template>
 
 <script>
 import { usePetStore } from "@/stores/petStore";
-import ConfirmationModal from "./ConfirmationModal.vue";
-
 export default {
   name: "PetCard",
-  components: {
-    ConfirmationModal,
-  },
   props: {
     pet: {
       type: Object,
@@ -99,7 +88,6 @@ export default {
       isIntersecting: false,
       isLoading: true,
       observer: null,
-      showDeleteModal: false,
       imageLoadError: false,
       isAnimating: false,
     };
@@ -110,7 +98,7 @@ export default {
       return petStore.favoritePets.includes(this.pet.id);
     },
     currentImageSrc() {
-      if (!this.isIntersecting) {
+      if (!this.isIntersecting || this.isLoading) {
         return "/default-placeholder.png";
       }
       return this.imageLoadError ? "/default-placeholder.png" : this.imageSrc;
@@ -173,17 +161,6 @@ export default {
         this.observer.unobserve(entry.target);
       }
     },
-    showDeleteConfirmation() {
-      this.showDeleteModal = true;
-    },
-    async handleDelete() {
-      try {
-        const petStore = usePetStore();
-        await petStore.deletePet(this.pet.id);
-      } catch (error) {
-        console.error("Failed to delete pet:", error);
-      }
-    },
   },
   mounted() {
     // Initialize Intersection Observer with larger rootMargin for earlier loading
@@ -209,57 +186,153 @@ export default {
 .pet-card {
   border: none;
   overflow: hidden;
-  transition: transform 0.2s;
-  background-color: #f8f9fa;
+  transition: all 0.3s ease;
+  background-color: #ffffff;
   position: relative;
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  height: 100%;
 }
 
 .pet-card:hover {
-  transform: scale(1.02);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
-.action-buttons {
-  top: 10px;
-  right: 10px;
+.favorite-button-wrapper {
+  top: 16px;
+  right: 16px;
   z-index: 20;
-  display: flex;
-  gap: 8px;
 }
 
 .favorite-button {
-  background: none;
-  border: none;
-  padding: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 12px;
   cursor: pointer;
   position: relative;
   z-index: 30;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
-  transition: transform 0.2s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
-.favorite-button i {
-  font-size: 1.5rem;
-  color: #ffffff;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+.heart-container {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heart-bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 64, 129, 0.2) 0%,
+    transparent 70%
+  );
+  opacity: 0;
   transition: all 0.3s ease;
 }
 
+.heart-main {
+  position: relative;
+  z-index: 2;
+}
+
+.favorite-button i {
+  font-size: 1.75rem;
+  background: linear-gradient(45deg, #ff4081, #ff6e7f);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.85;
+  transform-origin: center;
+}
+
 .favorite-button:hover {
-  transform: scale(1.15);
+  transform: translateY(-2px) scale(1.05);
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .favorite-button:hover i {
-  color: #ff4081;
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.favorite-button:hover .heart-bg {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+.favorite-button.is-favorite {
+  background: rgba(255, 255, 255, 0.95);
 }
 
 .favorite-button.is-favorite i {
-  color: #ff4081;
-  animation: heartPop 0.3s ease-out;
+  opacity: 1;
+  background: linear-gradient(45deg, #ff4081, #ff6e7f);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 4px rgba(255, 64, 129, 0.3));
+}
+
+.favorite-button.is-favorite .heart-bg {
+  opacity: 1;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 64, 129, 0.3) 0%,
+    transparent 70%
+  );
+}
+
+.favorite-button.animate .heart-main {
+  animation: heartPop 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Ripple effect */
+.ripple {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 64, 129, 0.4) 0%,
+    transparent 50%
+  );
+  border-radius: 50%;
+  animation: rippleEffect 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes rippleEffect {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
 }
 
 @keyframes heartPop {
@@ -299,9 +372,10 @@ export default {
 .card-img-container {
   cursor: pointer;
   position: relative;
-  height: 200px;
+  height: 240px;
   overflow: hidden;
-  border-radius: 0.5rem;
+  border-radius: 1rem 1rem 0 0;
+  background-color: #f8f9fa;
 }
 
 .image-wrapper {
@@ -331,18 +405,36 @@ export default {
   object-fit: cover;
   height: 100%;
   width: 100%;
+  filter: brightness(0.85);
+  transition: all 0.3s ease;
+}
+
+.card-img-container:hover .pet-img {
+  transform: scale(1.05);
   filter: brightness(0.7);
-  transition: opacity 0.3s ease;
 }
 
 .overlay {
-  background: rgba(0, 0, 0, 0.5);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.2));
   transition: all 0.3s ease;
   opacity: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1.5rem;
 }
 
 .card-img-container:hover .overlay {
   opacity: 1;
+}
+
+.pet-info {
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+}
+
+.card-img-container:hover .pet-info {
+  transform: translateY(0);
 }
 
 .pet-info {
@@ -370,8 +462,27 @@ export default {
 }
 
 .pet-name {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: bold;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.pet-description {
+  font-size: 1rem;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+  opacity: 0.9;
+}
+
+.pet-type,
+.pet-age {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .spinner-border {

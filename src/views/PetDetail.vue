@@ -1,68 +1,159 @@
 <template>
-  <div class="container my-5" v-if="pet">
+  <div class="pet-detail-page" v-if="pet">
     <!-- Back Navigation -->
-    <button class="btn btn-link mb-4" @click="goBack">
-      <i class="fas fa-arrow-left me-2"></i>Back to pets
-    </button>
-
-    <div class="row">
-      <!-- Image Section -->
-      <div class="col-md-6">
-        <div class="position-relative">
-          <img
-            :src="mainImage"
-            class="img-fluid rounded shadow"
-            :alt="pet.name"
-            @error="setPlaceholderImage"
-          />
-          <!-- Favorite Button -->
-          <button
-            class="btn-favorite position-absolute"
-            @click="toggleFavorite"
-            :title="isFavorite ? 'Remove from favorites' : 'Add to favorites'"
-          >
-            <i
-              class="fas fa-heart fa-2x"
-              :class="{ 'text-danger': isFavorite, 'text-muted': !isFavorite }"
-            ></i>
-          </button>
-        </div>
-      </div>
-
-      <!-- Pet Information -->
-      <div class="col-md-6">
-        <div class="pet-info">
-          <h1 class="display-4 mb-4">{{ pet.name }}</h1>
-
-          <div class="info-item mb-3">
-            <i :class="[getPetIcon(pet.type), 'me-2 text-primary']"></i>
-            <span class="fw-bold">Type:</span> {{ pet.type }}
-          </div>
-
-          <div class="info-item mb-3">
-            <i class="fas fa-birthday-cake me-2 text-primary"></i>
-            <span class="fw-bold">Age:</span>
-            {{ pet.age }} {{ pet.age === 1 ? "year" : "years" }} old
-          </div>
-
-          <div class="info-item mb-4">
-            <i class="fas fa-info-circle me-2 text-primary"></i>
-            <span class="fw-bold">Description:</span>
-            <p class="mt-2">{{ pet.description }}</p>
-          </div>
-
-          <button class="btn btn-primary btn-lg">
-            <i class="fas fa-paw me-2"></i>Adopt {{ pet.name }}
-          </button>
-        </div>
-      </div>
+    <div class="container py-3">
+      <button class="btn-back" @click="goBack" data-aos="fade-right">
+        <i class="fas fa-arrow-left me-2"></i>Back to pets
+      </button>
     </div>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="container">
+        <div class="row align-items-center g-4">
+          <!-- Image Section -->
+          <div class="col-lg-6" data-aos="fade-right">
+            <div class="image-wrapper">
+              <img
+                :src="mainImage"
+                class="pet-image"
+                :alt="pet.name"
+                @error="setPlaceholderImage"
+              />
+              <!-- Favorite Button -->
+              <button
+                class="btn-favorite"
+                @click="toggleFavorite"
+                :class="{ 'is-favorite': isFavorite }"
+                :title="
+                  isFavorite ? 'Remove from favorites' : 'Add to favorites'
+                "
+              >
+                <div class="heart-container">
+                  <i class="fa-heart" :class="[isFavorite ? 'fas' : 'far']"></i>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Pet Information -->
+          <div class="col-lg-6" data-aos="fade-left">
+            <div class="pet-info">
+              <h1 class="pet-name">{{ pet.name }}</h1>
+
+              <div class="info-cards">
+                <div class="info-card" data-aos="fade-up" data-aos-delay="100">
+                  <div class="info-icon">
+                    <i :class="getPetIcon(pet.type)"></i>
+                  </div>
+                  <div class="info-content">
+                    <h3>Type</h3>
+                    <p>{{ pet.type }}</p>
+                  </div>
+                </div>
+
+                <div class="info-card" data-aos="fade-up" data-aos-delay="200">
+                  <div class="info-icon">
+                    <i class="fas fa-birthday-cake"></i>
+                  </div>
+                  <div class="info-content">
+                    <h3>Age</h3>
+                    <p>
+                      {{ pet.age }} {{ pet.age === 1 ? "year" : "years" }} old
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="description-card"
+                data-aos="fade-up"
+                data-aos-delay="300"
+              >
+                <h3>About {{ pet.name }}</h3>
+                <p>{{ pet.description }}</p>
+              </div>
+
+              <button class="btn-adopt" data-aos="fade-up" data-aos-delay="400">
+                <i class="fas fa-paw me-2"></i>
+                Adopt {{ pet.name }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Adopt Section -->
+    <section class="why-adopt-section">
+      <div class="container">
+        <h2 class="section-title text-center" data-aos="fade-up">
+          Why Adopt {{ pet.name }}?
+        </h2>
+        <div class="row g-4">
+          <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="benefit-card">
+              <div class="benefit-icon">
+                <i class="fas fa-heart"></i>
+              </div>
+              <h3>Give a Home</h3>
+              <p>Provide a loving forever home to a pet in need</p>
+            </div>
+          </div>
+          <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+            <div class="benefit-card">
+              <div class="benefit-icon">
+                <i class="fas fa-hands-helping"></i>
+              </div>
+              <h3>Support</h3>
+              <p>Get guidance and support throughout the adoption process</p>
+            </div>
+          </div>
+          <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+            <div class="benefit-card">
+              <div class="benefit-icon">
+                <i class="fas fa-shield-alt"></i>
+              </div>
+              <h3>Health Checked</h3>
+              <p>All our pets are health-checked and behavior-assessed</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section text-center">
+      <div class="container">
+        <div class="cta-content" data-aos="zoom-in">
+          <h2 class="mb-4">Ready to Welcome {{ pet.name }} Home?</h2>
+          <p class="mb-4">
+            Start your adoption journey today and give {{ pet.name }} the loving
+            home they deserve.
+          </p>
+          <button class="btn-adopt btn-lg">
+            <i class="fas fa-paw me-2"></i>
+            Start Adoption Process
+          </button>
+        </div>
+      </div>
+    </section>
   </div>
+
+  <!-- Not Found State -->
   <div v-else class="container my-5 text-center">
-    <h2 class="text-muted">Pet not found</h2>
-    <button class="btn btn-primary mt-3" @click="goBack">
-      Return to pet list
-    </button>
+    <div class="not-found-content" data-aos="fade-up">
+      <i class="fas fa-search fa-3x mb-4 text-muted"></i>
+      <h2 class="mb-4">Pet Not Found</h2>
+      <p class="text-muted mb-4">
+        We couldn't find the pet you're looking for. They might have already
+        found their forever home!
+      </p>
+      <button class="btn-primary" @click="goBack">
+        <i class="fas fa-arrow-left me-2"></i>
+        Return to Pet List
+      </button>
+    </div>
   </div>
 </template>
 
@@ -87,7 +178,6 @@ export default {
       petStore.favoritePets.includes(petId.value)
     );
 
-    // Update route meta when pet data changes
     watch(
       pet,
       (newPet) => {
@@ -142,40 +232,290 @@ export default {
 </script>
 
 <style scoped>
+.pet-detail-page {
+  overflow-x: hidden;
+}
+
+/* Back Button */
+.btn-back {
+  background: none;
+  border: none;
+  color: #6366f1;
+  font-weight: 600;
+  padding: 0.5rem 0;
+  transition: all 0.3s ease;
+}
+
+.btn-back:hover {
+  transform: translateX(-5px);
+  color: #4f46e5;
+}
+
+/* Hero Section */
+.hero-section {
+  padding: 2rem 0 6rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.image-wrapper {
+  position: relative;
+  border-radius: 2rem;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.pet-image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Favorite Button */
 .btn-favorite {
-  top: 10px;
-  right: 10px;
-  background: white;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.9);
   border: none;
   border-radius: 50%;
-  width: 48px;
-  height: 48px;
+  width: 54px;
+  height: 54px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  z-index: 10;
 }
 
 .btn-favorite:hover {
   transform: scale(1.1);
+  background: white;
 }
 
 .btn-favorite i {
-  transition: all 0.2s ease;
+  font-size: 1.75rem;
+  background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  opacity: 0.7;
+  transition: all 0.3s ease;
 }
 
-.info-item {
-  font-size: 1.1rem;
+.btn-favorite:hover i {
+  opacity: 1;
 }
 
+.btn-favorite.is-favorite i {
+  opacity: 1;
+}
+
+/* Pet Info */
 .pet-info {
-  padding: 1rem;
+  padding: 2rem;
 }
 
-@media (min-width: 768px) {
-  .pet-info {
-    padding: 0 1rem;
+.pet-name {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: #1f2937;
+  margin-bottom: 2rem;
+  line-height: 1.2;
+}
+
+.info-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.info-card {
+  background: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.info-card:hover {
+  transform: translateY(-5px);
+}
+
+.info-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.info-icon i {
+  font-size: 1.25rem;
+  color: white;
+}
+
+.info-content h3 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #6b7280;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.info-content p {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.description-card {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.description-card h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.description-card p {
+  color: #6b7280;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Why Adopt Section */
+.why-adopt-section {
+  padding: 6rem 0;
+  background: white;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 3rem;
+}
+
+.benefit-card {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  height: 100%;
+}
+
+.benefit-card:hover {
+  transform: translateY(-5px);
+}
+
+.benefit-icon {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border-radius: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+}
+
+.benefit-icon i {
+  font-size: 1.5rem;
+  color: white;
+}
+
+.benefit-card h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.benefit-card p {
+  color: #6b7280;
+  margin: 0;
+}
+
+/* CTA Section */
+.cta-section {
+  padding: 6rem 0;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+}
+
+.cta-content {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.btn-adopt {
+  background: white;
+  color: #6366f1;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.btn-adopt:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  color: #4f46e5;
+}
+
+/* Not Found State */
+.not-found-content {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 4rem 0;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991.98px) {
+  .pet-name {
+    font-size: 3rem;
+  }
+
+  .hero-section {
+    padding: 2rem 0 4rem;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .pet-name {
+    font-size: 2.5rem;
+  }
+
+  .info-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .section-title {
+    font-size: 2rem;
+  }
+
+  .benefit-card {
+    margin-bottom: 1rem;
   }
 }
 </style>

@@ -1,33 +1,53 @@
 <template>
-  <div class="container my-4">
-    <h1 class="display-4 fw-bold text-center">Find your pet!</h1>
-
-    <div class="row mt-4">
-      <!-- Filter Sidebar -->
-      <div class="col-md-3">
-        <FilterComponent @filter-change="handleFilterChange" />
-      </div>
-
-      <!-- Pet Cards Grid -->
-      <div class="col-md-9">
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-          <template v-if="filteredAndSortedPets.length">
-            <PetCard v-for="pet in paginatedPets" :key="pet.id" :pet="pet" />
-          </template>
-          <div v-else class="col-12 text-center py-5">
-            <p class="text-muted">No pets found matching your criteria.</p>
+  <div class="home-page">
+    <HomeHero />
+    <div class="main-content">
+      <div class="container-fluid">
+        <div class="row g-4">
+          <!-- Filter Sidebar -->
+          <div class="col-lg-3 col-xl-2">
+            <div class="sticky-sidebar">
+              <FilterComponent @filter-change="handleFilterChange" />
+            </div>
           </div>
-        </div>
 
-        <!-- Pagination -->
-        <div class="mt-4">
-          <PaginationComponent
-            :total-items="filteredAndSortedPets.length"
-            :current-page="currentPage"
-            :items-per-page="itemsPerPage"
-            @page-change="handlePageChange"
-            @update:items-per-page="handleItemsPerPageChange"
-          />
+          <!-- Pet Cards Grid -->
+          <div class="col-lg-6 col-xl-8">
+            <StatsSection />
+
+            <!-- Pet Grid -->
+            <div class="pet-grid" data-aos="fade-up">
+              <template v-if="filteredAndSortedPets.length">
+                <div
+                  v-for="pet in paginatedPets"
+                  :key="pet.id"
+                  class="pet-card-wrapper"
+                  data-aos="fade-up"
+                >
+                  <PetCard :pet="pet" />
+                </div>
+              </template>
+              <NoResults v-else />
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination-wrapper" data-aos="fade-up">
+              <PaginationComponent
+                :total-items="filteredAndSortedPets.length"
+                :current-page="currentPage"
+                :items-per-page="itemsPerPage"
+                @page-change="handlePageChange"
+                @update:items-per-page="handleItemsPerPageChange"
+              />
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="col-lg-3 col-xl-2 d-none d-lg-block">
+            <div class="sticky-sidebar">
+              <QuickActions @show-favorites="showFavorites" />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -35,106 +55,113 @@
 </template>
 
 <script>
-import { usePetStore } from "@/stores/petStore";
+import { usePetFiltering } from "@/composables/usePetFiltering";
+import HomeHero from "@/components/Home/HomeHero.vue";
+import StatsSection from "@/components/Home/StatsSection.vue";
+import QuickActions from "@/components/Home/QuickActions.vue";
+import NoResults from "@/components/Home/NoResults.vue";
 import PetCard from "@/components/PetCard.vue";
 import FilterComponent from "@/components/FilterComponent.vue";
 import PaginationComponent from "@/components/PaginationComponent.vue";
 
 export default {
   name: "HomePage",
-  components: { PetCard, FilterComponent, PaginationComponent },
-  data() {
+  components: {
+    HomeHero,
+    StatsSection,
+    QuickActions,
+    NoResults,
+    PetCard,
+    FilterComponent,
+    PaginationComponent,
+  },
+  setup() {
+    const {
+      filters,
+      currentPage,
+      itemsPerPage,
+      filteredAndSortedPets,
+      paginatedPets,
+      handleFilterChange,
+      handlePageChange,
+      handleItemsPerPageChange,
+      showFavorites,
+    } = usePetFiltering();
+
     return {
-      filters: {
-        searchQuery: "",
-        selectedType: "",
-        maxAge: 30,
-        showFavoritesOnly: false,
-        sortBy: "",
-      },
-      currentPage: 1,
-      itemsPerPage: 12,
+      filters,
+      currentPage,
+      itemsPerPage,
+      filteredAndSortedPets,
+      paginatedPets,
+      handleFilterChange,
+      handlePageChange,
+      handleItemsPerPageChange,
+      showFavorites,
     };
-  },
-  computed: {
-    pets() {
-      const petStore = usePetStore();
-      return petStore.pets;
-    },
-    favoritePets() {
-      const petStore = usePetStore();
-      return petStore.favoritePets;
-    },
-    filteredAndSortedPets() {
-      let filtered = [...this.pets];
-
-      // Apply name search filter
-      if (this.filters.searchQuery) {
-        filtered = filtered.filter((pet) =>
-          pet.name
-            .toLowerCase()
-            .includes(this.filters.searchQuery.toLowerCase())
-        );
-      }
-
-      // Apply type filter
-      if (this.filters.selectedType) {
-        filtered = filtered.filter(
-          (pet) => pet.type === this.filters.selectedType
-        );
-      }
-
-      // Apply age filter
-      filtered = filtered.filter((pet) => pet.age <= this.filters.maxAge);
-
-      // Apply favorites filter
-      if (this.filters.showFavoritesOnly) {
-        filtered = filtered.filter((pet) => this.favoritePets.includes(pet.id));
-      }
-
-      // Apply sorting
-      if (this.filters.sortBy) {
-        filtered.sort((a, b) => {
-          switch (this.filters.sortBy) {
-            case "name":
-              return a.name.localeCompare(b.name);
-            case "age":
-              return a.age - b.age;
-            case "type":
-              return a.type.localeCompare(b.type);
-            default:
-              return 0;
-          }
-        });
-      }
-
-      return filtered;
-    },
-    paginatedPets() {
-      const start = (this.currentPage - 1) * this.itemsPerPage;
-      const end = start + this.itemsPerPage;
-      return this.filteredAndSortedPets.slice(start, end);
-    },
-  },
-  methods: {
-    handleFilterChange(newFilters) {
-      this.filters = { ...newFilters };
-      this.currentPage = 1; // Reset to first page when filters change
-    },
-    handlePageChange(page) {
-      this.currentPage = page;
-    },
-    handleItemsPerPageChange(value) {
-      this.itemsPerPage = value;
-      this.currentPage = 1; // Reset to first page when items per page changes
-    },
   },
 };
 </script>
 
-<style>
-.border {
-  border: 1px solid #ccc;
-  background-color: #f8f9fa;
+<style scoped>
+.home-page {
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+.main-content {
+  padding-bottom: 4rem;
+}
+
+.container-fluid {
+  max-width: 1920px;
+  padding: 0 2rem;
+}
+
+/* Sticky Sidebars */
+.sticky-sidebar {
+  position: sticky;
+  top: 2rem;
+}
+
+/* Pet Grid */
+.pet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.pet-card-wrapper {
+  height: 100%;
+}
+
+/* Pagination */
+.pagination-wrapper {
+  margin-top: 2rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1199.98px) {
+  .container-fluid {
+    padding: 0 1rem;
+  }
+
+  .pet-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 991.98px) {
+  .sticky-sidebar {
+    position: static;
+    margin-bottom: 1.5rem;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .container-fluid {
+    padding: 0 1rem;
+  }
 }
 </style>

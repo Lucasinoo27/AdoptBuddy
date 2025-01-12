@@ -1,88 +1,119 @@
 <template>
-  <div class="container my-5">
-    <h1 class="display-4 fw-bold text-center mb-4">Add a new pet!</h1>
-    <form
-      @submit.prevent="validateAndSubmit"
-      class="form-container shadow p-4 rounded"
-    >
+  <div class="form-wrapper" data-aos="fade-up">
+    <form @submit.prevent="validateAndSubmit" class="modern-form">
       <!-- Pet Name -->
-      <div class="form-outline mb-4">
-        <input
-          type="text"
-          id="petName"
-          v-model="pet.name"
-          class="form-control"
-          :class="{ 'is-invalid': errors.name }"
-          placeholder=" "
-        />
-        <label class="form-label" for="petName">Pet's Name</label>
-        <div class="invalid-feedback" v-if="errors.name">
+      <div class="form-group" data-aos="fade-up" data-aos-delay="100">
+        <div class="input-wrapper">
+          <div class="input-icon">
+            <i class="fas fa-paw"></i>
+          </div>
+          <div class="input-container">
+            <input
+              type="text"
+              id="petName"
+              v-model="pet.name"
+              class="form-control"
+              :class="{ 'is-invalid': errors.name }"
+              placeholder=" "
+            />
+            <label for="petName">Pet's Name</label>
+          </div>
+        </div>
+        <div class="error-message" v-if="errors.name">
+          <i class="fas fa-exclamation-circle"></i>
           {{ errors.name }}
         </div>
       </div>
 
       <!-- Description -->
-      <div class="form-outline mb-4">
-        <textarea
-          id="description"
-          v-model="pet.description"
-          class="form-control"
-          :class="{ 'is-invalid': errors.description }"
-          placeholder=" "
-          rows="3"
-        ></textarea>
-        <label class="form-label" for="description">Description</label>
-        <div class="invalid-feedback" v-if="errors.description">
+      <div class="form-group" data-aos="fade-up" data-aos-delay="200">
+        <div class="input-wrapper">
+          <div class="input-icon">
+            <i class="fas fa-comment-alt"></i>
+          </div>
+          <div class="input-container">
+            <textarea
+              id="description"
+              v-model="pet.description"
+              class="form-control"
+              :class="{ 'is-invalid': errors.description }"
+              placeholder=" "
+              rows="3"
+            ></textarea>
+            <label for="description">Description</label>
+          </div>
+        </div>
+        <div class="error-message" v-if="errors.description">
+          <i class="fas fa-exclamation-circle"></i>
           {{ errors.description }}
         </div>
       </div>
 
       <!-- Pet Type -->
-      <div class="form-outline mb-4">
-        <select
-          id="petType"
-          v-model="pet.type"
-          class="form-select"
-          :class="{ 'is-invalid': errors.type }"
-        >
-          <option disabled value="">Select pet type</option>
-          <option value="Dog">Dog</option>
-          <option value="Cat">Cat</option>
-          <option value="Bird">Bird</option>
-        </select>
-        <label class="form-label" for="petType">Type</label>
-        <div class="invalid-feedback" v-if="errors.type">
+      <div class="form-group" data-aos="fade-up" data-aos-delay="300">
+        <div class="input-wrapper">
+          <div class="input-icon">
+            <i class="fas fa-tag"></i>
+          </div>
+          <div class="input-container">
+            <select
+              id="petType"
+              v-model="pet.type"
+              class="form-control"
+              :class="{ 'is-invalid': errors.type }"
+            >
+              <option disabled value="">Select pet type</option>
+              <option value="Dog">Dog</option>
+              <option value="Cat">Cat</option>
+              <option value="Bird">Bird</option>
+              <option value="Rabbit">Rabbit</option>
+            </select>
+            <label for="petType">Type</label>
+          </div>
+        </div>
+        <div class="error-message" v-if="errors.type">
+          <i class="fas fa-exclamation-circle"></i>
           {{ errors.type }}
         </div>
       </div>
 
       <!-- Age -->
-      <div class="form-outline mb-4">
-        <input
-          type="number"
-          id="petAge"
-          v-model.number="pet.age"
-          class="form-control"
-          :class="{ 'is-invalid': errors.age }"
-          min="0"
-          max="30"
-        />
-        <label class="form-label" for="petAge">Age (years)</label>
-        <div class="invalid-feedback" v-if="errors.age">
+      <div class="form-group" data-aos="fade-up" data-aos-delay="400">
+        <div class="input-wrapper">
+          <div class="input-icon">
+            <i class="fas fa-birthday-cake"></i>
+          </div>
+          <div class="input-container">
+            <input
+              type="number"
+              id="petAge"
+              v-model.number="pet.age"
+              class="form-control"
+              :class="{ 'is-invalid': errors.age }"
+              min="0"
+              max="30"
+              placeholder=" "
+            />
+            <label for="petAge">Age (years)</label>
+          </div>
+        </div>
+        <div class="error-message" v-if="errors.age">
+          <i class="fas fa-exclamation-circle"></i>
           {{ errors.age }}
         </div>
       </div>
 
       <!-- Image Upload -->
-      <div class="mb-4">
-        <label class="form-label">Pet Photo</label>
+      <div class="form-group" data-aos="fade-up" data-aos-delay="500">
+        <label class="upload-label">Pet Photo</label>
         <ImageUploader
           :max-size="5"
           :initial-image="pet.image"
           @image-selected="handleImageSelected"
           @image-removed="handleImageRemoved"
         />
-        <div class="invalid-feedback d-block" v-if="errors.image">
+        <div class="error-message" v-if="errors.image">
+          <i class="fas fa-exclamation-circle"></i>
           {{ errors.image }}
         </div>
       </div>
@@ -90,13 +121,16 @@
       <!-- Submit Button -->
       <button
         type="submit"
-        class="btn btn-primary btn-block w-100"
+        class="submit-button"
         :disabled="isSubmitting"
+        data-aos="fade-up"
+        data-aos-delay="600"
       >
         <span
           v-if="isSubmitting"
           class="spinner-border spinner-border-sm me-2"
         ></span>
+        <i class="fas fa-plus-circle me-2" v-else></i>
         {{ isSubmitting ? "Adding Pet..." : "Add Pet" }}
       </button>
     </form>
@@ -206,68 +240,160 @@ export default {
 </script>
 
 <style scoped>
-.container {
-  max-width: 600px;
+.form-wrapper {
+  background: white;
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
-.form-container {
-  background: #ffffff;
+.modern-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
-.form-outline {
+.form-group {
   position: relative;
-  margin-bottom: 1.5rem;
 }
 
-.form-outline .form-label {
+.input-wrapper {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.input-icon {
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.input-icon i {
+  font-size: 1.25rem;
+  color: white;
+}
+
+.input-container {
+  position: relative;
+  flex-grow: 1;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.5rem;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+  outline: none;
+}
+
+.form-control.is-invalid {
+  border-color: #ef4444;
+}
+
+.form-control.is-invalid:focus {
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+}
+
+label {
   position: absolute;
+  left: 1rem;
   top: 50%;
-  left: 0.75rem;
   transform: translateY(-50%);
-  font-size: 0.9rem;
-  color: #6c757d;
-  pointer-events: none;
-  transition: all 0.3s ease-in-out;
-}
-
-.form-outline .form-control:focus ~ .form-label,
-.form-outline .form-control:not(:placeholder-shown) ~ .form-label,
-.form-outline .form-select:focus ~ .form-label,
-.form-outline .form-select:not([value=""]) ~ .form-label {
-  top: -0.75rem;
-  left: 0.5rem;
-  color: #0d6efd;
-  font-size: 0.8rem;
   background: white;
   padding: 0 0.25rem;
+  color: #6b7280;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+  pointer-events: none;
 }
 
-.form-outline .form-control,
-.form-outline .form-select {
-  border: 1px solid #ced4da;
+textarea ~ label {
+  top: 1rem;
+  transform: none;
+}
+
+.form-control:focus ~ label,
+.form-control:not(:placeholder-shown) ~ label {
+  top: -0.5rem;
+  left: 0.75rem;
+  font-size: 0.75rem;
+  color: #6366f1;
+}
+
+.form-control.is-invalid ~ label {
+  color: #ef4444;
+}
+
+.error-message {
+  margin-top: 0.5rem;
+  color: #ef4444;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.upload-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.submit-button {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
   border-radius: 0.5rem;
-  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  margin-top: 1rem;
 }
 
-.form-outline .form-control:focus,
-.form-outline .form-select:focus {
-  border-color: #0d6efd;
-  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+.submit-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
 }
 
-.btn-primary {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
+.submit-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
-.btn-primary:hover:not(:disabled) {
-  background-color: #0056b3;
-  border-color: #004085;
-}
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .form-wrapper {
+    padding: 1.5rem;
+  }
 
-.btn-primary:disabled {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
-  opacity: 0.65;
+  .input-wrapper {
+    flex-direction: column;
+  }
+
+  .input-icon {
+    display: none;
+  }
 }
 </style>

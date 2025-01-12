@@ -10,27 +10,166 @@ const loadState = () => {
       : [
           {
             id: 1,
-            name: "Buddy",
+            name: "Luna",
             type: "Dog",
             age: 3,
-            image: require("@/assets/dog.jpg"),
-            description: "Friendly dog",
+            image: "/default-placeholder.png",
+            description:
+              "Friendly Labrador who loves playing fetch and swimming",
           },
           {
             id: 2,
-            name: "Mittens",
+            name: "Oliver",
             type: "Cat",
             age: 2,
-            image: require("@/assets/dog.jpg"),
-            description: "Cute cat",
+            image: "/default-placeholder.png",
+            description:
+              "Gentle Persian cat who enjoys lazy afternoons in the sun",
           },
           {
             id: 3,
+            name: "Max",
+            type: "Dog",
+            age: 5,
+            image: "/default-placeholder.png",
+            description:
+              "Energetic German Shepherd, great with kids and very protective",
+          },
+          {
+            id: 4,
+            name: "Bella",
+            type: "Cat",
+            age: 1,
+            image: "/default-placeholder.png",
+            description: "Playful Siamese kitten who loves attention",
+          },
+          {
+            id: 5,
             name: "Charlie",
+            type: "Dog",
+            age: 7,
+            image: "/default-placeholder.png",
+            description: "Calm Golden Retriever, perfect family companion",
+          },
+          {
+            id: 6,
+            name: "Lucy",
+            type: "Rabbit",
+            age: 2,
+            image: "/default-placeholder.png",
+            description: "Friendly Holland Lop with floppy ears",
+          },
+          {
+            id: 7,
+            name: "Milo",
+            type: "Cat",
+            age: 4,
+            image: "/default-placeholder.png",
+            description: "Independent Maine Coon who's great with other cats",
+          },
+          {
+            id: 8,
+            name: "Rocky",
+            type: "Dog",
+            age: 6,
+            image: "/default-placeholder.png",
+            description: "Strong but gentle Rottweiler, well-trained",
+          },
+          {
+            id: 9,
+            name: "Coco",
             type: "Bird",
             age: 1,
-            image: require("@/assets/dog.jpg"),
-            description: "Chirpy bird",
+            image: "/default-placeholder.png",
+            description: "Colorful Parakeet who loves to sing",
+          },
+          {
+            id: 10,
+            name: "Sophie",
+            type: "Cat",
+            age: 3,
+            image: "/default-placeholder.png",
+            description: "Sweet Ragdoll who loves to be held",
+          },
+          {
+            id: 11,
+            name: "Cooper",
+            type: "Dog",
+            age: 2,
+            image: "/default-placeholder.png",
+            description: "Playful Beagle with a great nose for adventures",
+          },
+          {
+            id: 12,
+            name: "Lily",
+            type: "Rabbit",
+            age: 1,
+            image: "/default-placeholder.png",
+            description: "Tiny Netherland Dwarf rabbit, very gentle",
+          },
+          {
+            id: 13,
+            name: "Leo",
+            type: "Cat",
+            age: 5,
+            image: "/default-placeholder.png",
+            description: "Majestic Bengal cat with stunning markings",
+          },
+          {
+            id: 14,
+            name: "Bailey",
+            type: "Dog",
+            age: 8,
+            image: "/default-placeholder.png",
+            description: "Senior Poodle mix who's great with everyone",
+          },
+          {
+            id: 15,
+            name: "Rio",
+            type: "Bird",
+            age: 2,
+            image: "/default-placeholder.png",
+            description: "Friendly Cockatiel who loves head scratches",
+          },
+          {
+            id: 16,
+            name: "Ziggy",
+            type: "Cat",
+            age: 1,
+            image: "/default-placeholder.png",
+            description: "Energetic Tabby kitten full of personality",
+          },
+          {
+            id: 17,
+            name: "Duke",
+            type: "Dog",
+            age: 4,
+            image: "/default-placeholder.png",
+            description: "Gentle Great Dane who thinks he's a lap dog",
+          },
+          {
+            id: 18,
+            name: "Daisy",
+            type: "Rabbit",
+            age: 3,
+            image: "/default-placeholder.png",
+            description: "Sweet English Angora with fluffy fur",
+          },
+          {
+            id: 19,
+            name: "Shadow",
+            type: "Cat",
+            age: 7,
+            image: "/default-placeholder.png",
+            description: "Quiet black cat who loves peaceful environments",
+          },
+          {
+            id: 20,
+            name: "Buddy",
+            type: "Dog",
+            age: 1,
+            image: "/default-placeholder.png",
+            description: "Enthusiastic Corgi puppy with endless energy",
           },
         ],
     favoritePets: savedFavorites ? JSON.parse(savedFavorites) : [],
@@ -78,6 +217,16 @@ export const usePetStore = defineStore("petStore", {
     saveToLocalStorage() {
       localStorage.setItem("pets", JSON.stringify(this.pets));
       localStorage.setItem("favoritePets", JSON.stringify(this.favoritePets));
+    },
+    resetStore() {
+      // Clear localStorage
+      localStorage.removeItem("pets");
+      localStorage.removeItem("favoritePets");
+
+      // Reset to initial state
+      const initialState = loadState();
+      this.pets = initialState.pets;
+      this.favoritePets = initialState.favoritePets;
     },
   },
 });

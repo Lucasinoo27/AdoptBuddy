@@ -113,7 +113,7 @@ export default {
     },
   },
   mounted() {
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow = "visible";
   },
   beforeUnmount() {
     document.body.style.overflow = "";
