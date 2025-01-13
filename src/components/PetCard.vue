@@ -84,7 +84,7 @@ export default {
   },
   data() {
     return {
-      imageSrc: this.pet.image || "/default-placeholder.png",
+      imageSrc: this.getImagePath(this.pet.image),
       isIntersecting: false,
       isLoading: true,
       observer: null,
@@ -98,17 +98,21 @@ export default {
       return petStore.favoritePets.includes(this.pet.id);
     },
     currentImageSrc() {
+      const defaultImage = process.env.BASE_URL + "default-placeholder.png";
       if (!this.isIntersecting || this.isLoading) {
-        return "/default-placeholder.png";
+        return defaultImage;
       }
-      return this.imageLoadError ? "/default-placeholder.png" : this.imageSrc;
+      return this.imageLoadError ? defaultImage : this.imageSrc;
+    },
+    isDataUrl() {
+      return this.pet.image?.startsWith("data:");
     },
   },
   watch: {
     "pet.image": {
       handler(newImage) {
         if (newImage && newImage !== this.imageSrc) {
-          this.imageSrc = newImage;
+          this.imageSrc = this.getImagePath(newImage);
           this.imageLoadError = false;
           this.isLoading = true;
         }
@@ -117,6 +121,16 @@ export default {
     },
   },
   methods: {
+    getImagePath(image) {
+      const defaultImage = process.env.BASE_URL + "default-placeholder.png";
+      if (!image) return defaultImage;
+      // If it's a data URL (uploaded image), use it directly
+      if (image.startsWith("data:")) return image;
+      // If it's a relative path, ensure it starts with the base URL
+      return image.startsWith("/")
+        ? process.env.BASE_URL + image.slice(1)
+        : process.env.BASE_URL + image;
+    },
     getPetIcon(type) {
       switch (type.toLowerCase()) {
         case "dog":
@@ -132,7 +146,7 @@ export default {
     handleImageError() {
       this.imageLoadError = true;
       this.isLoading = false;
-      this.imageSrc = "/default-placeholder.png";
+      this.imageSrc = process.env.BASE_URL + "default-placeholder.png";
     },
     handleImageLoad() {
       this.isLoading = false;
