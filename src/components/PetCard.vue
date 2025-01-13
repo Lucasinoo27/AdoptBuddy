@@ -126,7 +126,7 @@ export default {
       if (!image) return defaultImage;
       // If it's a data URL (uploaded image), use it directly
       if (image.startsWith("data:")) return image;
-      // If it's a relative path, ensure it starts with the base URL
+      // For other paths, ensure proper base URL
       return image.startsWith("/")
         ? process.env.BASE_URL + image.slice(1)
         : process.env.BASE_URL + image;
@@ -171,17 +171,21 @@ export default {
         this.isIntersecting = true;
         // Reset loading state when intersection occurs
         this.isLoading = true;
+        // Load the image immediately
+        if (this.$refs.image) {
+          this.$refs.image.src = this.imageSrc;
+        }
         // Once the image is loaded, we can stop observing
         this.observer.unobserve(entry.target);
       }
     },
   },
   mounted() {
-    // Initialize Intersection Observer with larger rootMargin for earlier loading
+    // Initialize Intersection Observer with much larger rootMargin and lower threshold
     this.observer = new IntersectionObserver(this.handleIntersection, {
       root: null,
-      rootMargin: "100px",
-      threshold: 0.1,
+      rootMargin: "500px",
+      threshold: 0.01,
     });
 
     if (this.$refs.image) {

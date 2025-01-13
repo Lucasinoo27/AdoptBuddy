@@ -170,10 +170,11 @@ export default {
     const route = useRoute();
     const router = useRouter();
     const petStore = usePetStore();
+    const defaultImage = process.env.BASE_URL + "default-placeholder.png";
 
     const petId = computed(() => Number(route.params.id));
     const pet = computed(() => petStore.pets.find((p) => p.id === petId.value));
-    const mainImage = ref(pet.value?.image || "/default-placeholder.png");
+    const mainImage = ref(pet.value?.image || defaultImage);
     const isFavorite = computed(() =>
       petStore.favoritePets.includes(petId.value)
     );
@@ -187,14 +188,16 @@ export default {
           route.meta.keywords = `adopt ${newPet.type.toLowerCase()}, ${newPet.type.toLowerCase()} adoption, pet adoption, ${
             newPet.name
           }`;
-          route.meta.image = newPet.image || "/default-placeholder.png";
+          route.meta.image = newPet.image || defaultImage;
+          // Update mainImage when pet changes
+          mainImage.value = newPet.image || defaultImage;
         }
       },
       { immediate: true }
     );
 
     const setPlaceholderImage = () => {
-      mainImage.value = "/default-placeholder.png";
+      mainImage.value = defaultImage;
     };
 
     const toggleFavorite = () => {

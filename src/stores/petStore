@@ -1,177 +1,216 @@
 import { defineStore } from "pinia";
 
+// Specific image assignments for each pet type
+const petImages = {
+  Dog: {
+    Luna: "/dog2.jpg",
+    Max: "/dog3.jpg",
+    Charlie: "/dog4.jpg",
+    Rocky: "/dog5.jpg",
+    Cooper: "/dog6.jpg",
+    Duke: "/dog7.jpg",
+    Bailey: "/dog8.jpg",
+    Buddy: "/dog.jpg",
+  },
+  Cat: {
+    Oliver: "/cat1.jpg",
+    Bella: "/cat2.jpg",
+    Milo: "/cat3.jpg",
+    Sophie: "/cat4.jpg",
+    Leo: "/cat5.jpg",
+    Shadow: "/cat6.jpg",
+    Ziggy: "/cat7.jpg",
+  },
+  Rabbit: {
+    Lucy: "/rabbit1.jpg",
+    Lily: "/rabbit2.jpg",
+    Daisy: "/rabbit3.jpg",
+  },
+  Bird: {
+    Coco: "/bird.jpg",
+    Rio: "/bird2.jpg",
+  },
+};
+
+// Helper function to get specific image for a pet
+const getPetImage = (name, type) => {
+  if (petImages[type] && petImages[type][name]) {
+    return petImages[type][name];
+  }
+  return "/default-placeholder.png";
+};
+
 // Load initial state from localStorage or use defaults
 const loadState = () => {
   const savedPets = localStorage.getItem("pets");
   const savedFavorites = localStorage.getItem("favoritePets");
+
+  const defaultPets = [
+    {
+      id: 1,
+      name: "Luna",
+      type: "Dog",
+      age: 3,
+      image: getPetImage("Luna", "Dog"),
+      description: "Friendly Labrador who loves playing fetch and swimming",
+    },
+    {
+      id: 2,
+      name: "Oliver",
+      type: "Cat",
+      age: 2,
+      image: getPetImage("Oliver", "Cat"),
+      description: "Gentle Persian cat who enjoys lazy afternoons in the sun",
+    },
+    {
+      id: 3,
+      name: "Max",
+      type: "Dog",
+      age: 5,
+      image: getPetImage("Max", "Dog"),
+      description:
+        "Energetic German Shepherd, great with kids and very protective",
+    },
+    {
+      id: 4,
+      name: "Bella",
+      type: "Cat",
+      age: 1,
+      image: getPetImage("Bella", "Cat"),
+      description: "Playful Siamese kitten who loves attention",
+    },
+    {
+      id: 5,
+      name: "Charlie",
+      type: "Dog",
+      age: 7,
+      image: getPetImage("Charlie", "Dog"),
+      description: "Calm Golden Retriever, perfect family companion",
+    },
+    {
+      id: 6,
+      name: "Lucy",
+      type: "Rabbit",
+      age: 2,
+      image: getPetImage("Lucy", "Rabbit"),
+      description: "Friendly Holland Lop with floppy ears",
+    },
+    {
+      id: 7,
+      name: "Milo",
+      type: "Cat",
+      age: 4,
+      image: getPetImage("Milo", "Cat"),
+      description: "Independent Maine Coon who's great with other cats",
+    },
+    {
+      id: 8,
+      name: "Rocky",
+      type: "Dog",
+      age: 6,
+      image: getPetImage("Rocky", "Dog"),
+      description: "Strong but gentle Rottweiler, well-trained",
+    },
+    {
+      id: 9,
+      name: "Coco",
+      type: "Bird",
+      age: 1,
+      image: getPetImage("Coco", "Bird"),
+      description: "Colorful Parakeet who loves to sing",
+    },
+    {
+      id: 10,
+      name: "Sophie",
+      type: "Cat",
+      age: 3,
+      image: getPetImage("Sophie", "Cat"),
+      description: "Sweet Ragdoll who loves to be held",
+    },
+    {
+      id: 11,
+      name: "Cooper",
+      type: "Dog",
+      age: 2,
+      image: getPetImage("Cooper", "Dog"),
+      description: "Playful Beagle with a great nose for adventures",
+    },
+    {
+      id: 12,
+      name: "Lily",
+      type: "Rabbit",
+      age: 1,
+      image: getPetImage("Lily", "Rabbit"),
+      description: "Tiny Netherland Dwarf rabbit, very gentle",
+    },
+    {
+      id: 13,
+      name: "Leo",
+      type: "Cat",
+      age: 5,
+      image: getPetImage("Leo", "Cat"),
+      description: "Majestic Bengal cat with stunning markings",
+    },
+    {
+      id: 14,
+      name: "Bailey",
+      type: "Dog",
+      age: 8,
+      image: getPetImage("Bailey", "Dog"),
+      description: "Senior Poodle mix who's great with everyone",
+    },
+    {
+      id: 15,
+      name: "Rio",
+      type: "Bird",
+      age: 2,
+      image: getPetImage("Rio", "Bird"),
+      description: "Friendly Cockatiel who loves head scratches",
+    },
+    {
+      id: 16,
+      name: "Ziggy",
+      type: "Cat",
+      age: 1,
+      image: getPetImage("Ziggy", "Cat"),
+      description: "Energetic Tabby kitten full of personality",
+    },
+    {
+      id: 17,
+      name: "Duke",
+      type: "Dog",
+      age: 4,
+      image: getPetImage("Duke", "Dog"),
+      description: "Gentle Great Dane who thinks he's a lap dog",
+    },
+    {
+      id: 18,
+      name: "Daisy",
+      type: "Rabbit",
+      age: 3,
+      image: getPetImage("Daisy", "Rabbit"),
+      description: "Sweet English Angora with fluffy fur",
+    },
+    {
+      id: 19,
+      name: "Shadow",
+      type: "Cat",
+      age: 7,
+      image: getPetImage("Shadow", "Cat"),
+      description: "Quiet black cat who loves peaceful environments",
+    },
+    {
+      id: 20,
+      name: "Buddy",
+      type: "Dog",
+      age: 1,
+      image: getPetImage("Buddy", "Dog"),
+      description: "Enthusiastic Corgi puppy with endless energy",
+    },
+  ];
+
   return {
-    pets: savedPets
-      ? JSON.parse(savedPets)
-      : [
-          {
-            id: 1,
-            name: "Luna",
-            type: "Dog",
-            age: 3,
-            image: "/default-placeholder.png",
-            description:
-              "Friendly Labrador who loves playing fetch and swimming",
-          },
-          {
-            id: 2,
-            name: "Oliver",
-            type: "Cat",
-            age: 2,
-            image: "/default-placeholder.png",
-            description:
-              "Gentle Persian cat who enjoys lazy afternoons in the sun",
-          },
-          {
-            id: 3,
-            name: "Max",
-            type: "Dog",
-            age: 5,
-            image: "/default-placeholder.png",
-            description:
-              "Energetic German Shepherd, great with kids and very protective",
-          },
-          {
-            id: 4,
-            name: "Bella",
-            type: "Cat",
-            age: 1,
-            image: "/default-placeholder.png",
-            description: "Playful Siamese kitten who loves attention",
-          },
-          {
-            id: 5,
-            name: "Charlie",
-            type: "Dog",
-            age: 7,
-            image: "/default-placeholder.png",
-            description: "Calm Golden Retriever, perfect family companion",
-          },
-          {
-            id: 6,
-            name: "Lucy",
-            type: "Rabbit",
-            age: 2,
-            image: "/default-placeholder.png",
-            description: "Friendly Holland Lop with floppy ears",
-          },
-          {
-            id: 7,
-            name: "Milo",
-            type: "Cat",
-            age: 4,
-            image: "/default-placeholder.png",
-            description: "Independent Maine Coon who's great with other cats",
-          },
-          {
-            id: 8,
-            name: "Rocky",
-            type: "Dog",
-            age: 6,
-            image: "/default-placeholder.png",
-            description: "Strong but gentle Rottweiler, well-trained",
-          },
-          {
-            id: 9,
-            name: "Coco",
-            type: "Bird",
-            age: 1,
-            image: "/default-placeholder.png",
-            description: "Colorful Parakeet who loves to sing",
-          },
-          {
-            id: 10,
-            name: "Sophie",
-            type: "Cat",
-            age: 3,
-            image: "/default-placeholder.png",
-            description: "Sweet Ragdoll who loves to be held",
-          },
-          {
-            id: 11,
-            name: "Cooper",
-            type: "Dog",
-            age: 2,
-            image: "/default-placeholder.png",
-            description: "Playful Beagle with a great nose for adventures",
-          },
-          {
-            id: 12,
-            name: "Lily",
-            type: "Rabbit",
-            age: 1,
-            image: "/default-placeholder.png",
-            description: "Tiny Netherland Dwarf rabbit, very gentle",
-          },
-          {
-            id: 13,
-            name: "Leo",
-            type: "Cat",
-            age: 5,
-            image: "/default-placeholder.png",
-            description: "Majestic Bengal cat with stunning markings",
-          },
-          {
-            id: 14,
-            name: "Bailey",
-            type: "Dog",
-            age: 8,
-            image: "/default-placeholder.png",
-            description: "Senior Poodle mix who's great with everyone",
-          },
-          {
-            id: 15,
-            name: "Rio",
-            type: "Bird",
-            age: 2,
-            image: "/default-placeholder.png",
-            description: "Friendly Cockatiel who loves head scratches",
-          },
-          {
-            id: 16,
-            name: "Ziggy",
-            type: "Cat",
-            age: 1,
-            image: "/default-placeholder.png",
-            description: "Energetic Tabby kitten full of personality",
-          },
-          {
-            id: 17,
-            name: "Duke",
-            type: "Dog",
-            age: 4,
-            image: "/default-placeholder.png",
-            description: "Gentle Great Dane who thinks he's a lap dog",
-          },
-          {
-            id: 18,
-            name: "Daisy",
-            type: "Rabbit",
-            age: 3,
-            image: "/default-placeholder.png",
-            description: "Sweet English Angora with fluffy fur",
-          },
-          {
-            id: 19,
-            name: "Shadow",
-            type: "Cat",
-            age: 7,
-            image: "/default-placeholder.png",
-            description: "Quiet black cat who loves peaceful environments",
-          },
-          {
-            id: 20,
-            name: "Buddy",
-            type: "Dog",
-            age: 1,
-            image: "/default-placeholder.png",
-            description: "Enthusiastic Corgi puppy with endless energy",
-          },
-        ],
+    pets: savedPets ? JSON.parse(savedPets) : defaultPets,
     favoritePets: savedFavorites ? JSON.parse(savedFavorites) : [],
   };
 };
@@ -181,12 +220,20 @@ export const usePetStore = defineStore("petStore", {
   actions: {
     addPet(newPet) {
       const id = this.pets.length + 1;
+      // If no image is provided, assign a random one based on pet type
+      if (!newPet.image) {
+        newPet.image = "/default-placeholder.png";
+      }
       this.pets.push({ id, ...newPet });
       this.saveToLocalStorage();
     },
     updatePet(updatedPet) {
       const index = this.pets.findIndex((p) => p.id === updatedPet.id);
       if (index !== -1) {
+        // If image is being reset to placeholder, assign a new random image
+        if (!updatedPet.image) {
+          updatedPet.image = "/default-placeholder.png";
+        }
         this.pets[index] = { ...updatedPet };
         this.saveToLocalStorage();
       } else {
