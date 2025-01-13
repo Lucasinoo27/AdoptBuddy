@@ -1,4 +1,3 @@
-<!-- eslint-disable prettier/prettier -->
 <template>
   <div class="image-uploader">
     <!-- Preview Area -->
@@ -9,7 +8,7 @@
     >
       <!-- Loading Overlay -->
       <div v-if="isLoading" class="loading-overlay">
-        <div class="progress" style="width: 80%;">
+        <div class="progress" style="width: 80%">
           <div
             class="progress-bar progress-bar-striped progress-bar-animated"
             role="progressbar"

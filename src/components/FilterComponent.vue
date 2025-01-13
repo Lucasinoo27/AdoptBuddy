@@ -280,7 +280,6 @@ export default {
   background: #e5e7eb;
   border-radius: 1rem;
   outline: none;
-  -webkit-appearance: none;
 }
 
 .range-input::-webkit-slider-thumb {
