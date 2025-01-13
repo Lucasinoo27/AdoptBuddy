@@ -105,7 +105,6 @@
 
       <!-- Image Upload -->
       <div class="form-group" data-aos="fade-up" data-aos-delay="500">
-        <label class="upload-label">Pet Photo</label>
         <ImageUploader
           :max-size="5"
           :initial-image="pet.image"
