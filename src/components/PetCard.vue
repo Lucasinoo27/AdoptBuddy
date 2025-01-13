@@ -125,11 +125,18 @@ export default {
       const defaultImage = process.env.BASE_URL + "default-placeholder.png";
       if (!image) return defaultImage;
       // If it's a data URL (uploaded image), use it directly
-      if (image.startsWith("data:")) return image;
-      // For other paths, ensure proper base URL
-      return image.startsWith("/")
-        ? process.env.BASE_URL + image.slice(1)
-        : process.env.BASE_URL + image;
+      if (image.startsWith("data:")) {
+        return image;
+      }
+      // For paths starting with /src/assets, remove /src prefix
+      if (image.startsWith("/src/assets/")) {
+        return image.replace("/src/", "/");
+      }
+      // For paths starting with /, use BASE_URL
+      if (image.startsWith("/")) {
+        return process.env.BASE_URL + image.slice(1);
+      }
+      return image;
     },
     getPetIcon(type) {
       switch (type.toLowerCase()) {
