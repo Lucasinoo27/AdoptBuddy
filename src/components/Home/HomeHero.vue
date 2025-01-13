@@ -29,7 +29,7 @@ export default {
   background: var(--gradient-primary);
   -webkit-background-clip: text;
   background-clip: text;
-  -webkit-text-fill-color: #3aab97;
+  -webkit-text-fill-color: #6366f1;
 }
 
 @media (max-width: 991.98px) {
