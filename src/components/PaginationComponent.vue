@@ -161,7 +161,6 @@ export default {
 }
 
 .page-link {
-  color: #0d6efd;
   cursor: pointer;
   user-select: none;
 }
