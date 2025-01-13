@@ -89,5 +89,3 @@ This project is [MIT](https://choosealicense.com/licenses/mit/) licensed.
 This is a student project created for educational purposes. It is not intended for production use and will not receive regular updates or maintenance.
 
 ---
-
-<p align="center">Made with ❤️ for the School Course</p>
