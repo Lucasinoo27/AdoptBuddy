@@ -1,9 +1,23 @@
+/**
+ * Pet Filtering and Pagination Composable
+ *
+ * Handles the filtering, sorting, and pagination of pets in the application.
+ * Key features:
+ * - Text search by pet name
+ * - Filter by pet type and age
+ * - Show favorites only
+ * - Sorting by name, age, or type
+ * - Pagination with configurable items per page
+ */
+
 import { ref, computed } from "vue";
 import { usePetStore } from "@/stores/petStore";
 
+// Manages pet filtering, sorting, and pagination functionality
 export function usePetFiltering() {
   const petStore = usePetStore();
 
+  // Default filter state with initial values
   const filters = ref({
     searchQuery: "",
     selectedType: "",
@@ -12,9 +26,11 @@ export function usePetFiltering() {
     sortBy: "",
   });
 
+  // Pagination state
   const currentPage = ref(1);
   const itemsPerPage = ref(12);
 
+  // Applies all active filters and sorting to the pet list
   const filteredAndSortedPets = computed(() => {
     let filtered = [...petStore.pets];
 
@@ -61,26 +77,31 @@ export function usePetFiltering() {
     return filtered;
   });
 
+  // Gets the subset of pets for the current page
   const paginatedPets = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage.value;
     const end = start + itemsPerPage.value;
     return filteredAndSortedPets.value.slice(start, end);
   });
 
+  // Updates the current filter settings and resets pagination
   const handleFilterChange = (newFilters) => {
     filters.value = { ...newFilters };
     currentPage.value = 1;
   };
 
+  // Changes the current page of results being displayed
   const handlePageChange = (page) => {
     currentPage.value = page;
   };
 
+  // Updates how many pets are shown per page
   const handleItemsPerPageChange = (value) => {
     itemsPerPage.value = value;
     currentPage.value = 1;
   };
 
+  // Filters the list to show only favorited pets
   const showFavorites = () => {
     filters.value.showFavoritesOnly = true;
     currentPage.value = 1;
